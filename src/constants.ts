@@ -4,7 +4,7 @@ export const EXTS: Record<string, string> = {
     python: ".py",
     python3: ".py",
     c: ".c",
-    "c#": ".cs",
+    csharp: ".cs",
     javascript: ".js",
     ruby: ".rb",
     swift: ".swift",
