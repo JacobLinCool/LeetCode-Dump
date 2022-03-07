@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import path from "node:path";
 import chalk from "chalk";
 import { program } from "commander";
