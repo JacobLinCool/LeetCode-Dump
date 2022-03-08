@@ -33,7 +33,7 @@ export async function dump(
     await credential.init(session);
     leetcode = new LeetCode(credential);
 
-    const spinner = Ora("Scanning...").start();
+    const spinner = Ora({ text: "Scanning...", spinner: "bouncingBar" }).start();
     const { list, ac } = await get_list();
     spinner.succeed(`Scan Done. (${list.length} Problems, ${ac.length} Accepted)`);
     await sleep(cooldown);
@@ -59,7 +59,9 @@ export async function dump(
         await sleep(cooldown);
 
         const row: [string, string, string, Map<string, string>] = [
-            `${problem.questionFrontendId}. ${problem.title}`,
+            `[${problem.questionFrontendId}. ${problem.title}](./${path.basename(
+                folder,
+            )}) [🔗](${LEETCODE_DETAIL_BASE}${titleSlug}/)`,
             problem.difficulty,
             problem.topicTags.map((t) => "`" + t.name + "`").join(", "),
             new Map(),

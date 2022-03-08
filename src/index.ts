@@ -10,6 +10,8 @@ config();
 const package_meta = get_package_meta();
 program.version(chalk`{cyanBright ${package_meta.name}} {yellowBright v${package_meta.version}}`);
 
+process.stdout.isTTY = true;
+
 program
     .option(
         "-s, --session <session>",
