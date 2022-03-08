@@ -22,3 +22,7 @@ Example:
 ```bash
 leetcode-dump -s "eyJ0eXAiOiJKV1...AJFGlVhZ7f5QL8"
 ```
+
+## GitHub Action Usage
+
+[Example Repository](https://github.com/JacobLinCool/LeetCode-Solutions)
