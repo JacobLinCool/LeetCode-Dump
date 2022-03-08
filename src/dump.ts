@@ -3,7 +3,14 @@ import path from "node:path";
 import { Credential, LeetCode } from "leetcode-query";
 import fetch from "node-fetch";
 import Ora from "ora";
-import { COMMENTS, EXTS, LEETCODE_BASE, LEETCODE_DETAIL_BASE, README_TEMPLATE } from "./constants";
+import {
+    COMMENTS,
+    EXTS,
+    LEETCODE_BASE,
+    LEETCODE_DETAIL_BASE,
+    LEETCODE_SLUG_BASE,
+    README_TEMPLATE,
+} from "./constants";
 import { readable_memory, retry, sleep } from "./utils";
 
 let leetcode: LeetCode;
@@ -59,9 +66,9 @@ export async function dump(
         await sleep(cooldown);
 
         const row: [string, string, string, Map<string, string>] = [
-            `[${problem.questionFrontendId}. ${problem.title}](./${path.basename(
-                folder,
-            )}) [🔗](${LEETCODE_DETAIL_BASE}${titleSlug}/)`,
+            `[${problem.questionFrontendId}. ${problem.title}](./${encodeURI(
+                path.basename(folder),
+            )}) [🔗](${LEETCODE_SLUG_BASE}${titleSlug}/)`,
             problem.difficulty,
             problem.topicTags.map((t) => "`" + t.name + "`").join(", "),
             new Map(),
