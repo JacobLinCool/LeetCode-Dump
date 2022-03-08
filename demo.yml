@@ -23,7 +23,7 @@ config:
   # Explicitly set the number of rows
   # or use `auto` to take the current
   # number of rows of your shell
-  rows: 20
+  rows: 12
   
   # Amount of times to repeat GIF
   # If value is -1, play once
@@ -112,7 +112,7 @@ config:
 # Records, feel free to edit them
 records:
   - delay: 500
-    content: "\e[01;32mgitpod\e[00m \e[01;34m/workspace/LeetCode-Dump\e[00m (main) $ "
+    content: "\e[01;32mjacob\e[00m \e[01;34m/leetcode\e[00m (main) $ "
   - delay: 1000
     content: 'n'
   - delay: 50
@@ -159,64 +159,10 @@ records:
     content: p
   - delay: 500
     content: "\r\n"
-  - delay: 100
-    content: "\e[?25l⸨\e[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂\e[0m⸩ ⠇ reify: \e[32;40mtiming\e[0m \e[35marborist:ctor\e[0m Completed in 1ms\e[0m\e[K\r"
+  - delay: 1000
+    content: "\r\nadded 38 packages, and audited 39 packages in 1s\r\n\r\nfound \e[32m\e[1m0\e[22m\e[39m vulnerabilities\r\n"
   - delay: 30
-    content: "⸨\e[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂\e[0m⸩ ⠹ idealTree:lib: \e[7msill\e[0m \e[35midealTree\e[0m buildDeps\e[0m\e[K\r"
-  - delay: 30
-    content: "⸨\e[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂\e[0m⸩ ⠹ idealTree:lib: \e[7msill\e[0m \e[35midealTree\e[0m buildDeps\e[0m\e[K\r"
-  - delay: 30
-    content: "⸨\e[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂\e[0m⸩ ⠹ idealTree:lib: \e[7msill\e[0m \e[35midealTree\e[0m buildDeps\e[0m\e[K\r"
-  - delay: 30
-    content: "⸨\e[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂\e[0m⸩ ⠋ idealTree:lib: \e[7msill\e[0m \e[35midealTree\e[0m buildDeps\e[0m\e[K\r"
-  - delay: 30
-    content: "⸨\e[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂\e[0m⸩ ⠙ idealTree:lib: \e[7msill\e[0m \e[35midealTree\e[0m buildDeps\e[0m\e[K\r"
-  - delay: 30
-    content: "⸨\e[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂\e[0m⸩ ⠴ idealTree:lib: \e[7msill\e[0m \e[35midealTree\e[0m buildDeps\e[0m\e[K\r"
-  - delay: 30
-    content: "⸨\e[107;97m#########\e[0m\e[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂\e[0m⸩ ⠇ idealTree:lib: \e[32;40mtiming\e[0m \e[35midealTree:#root\e[0m Completed in 319ms\e[0m\e[K\r"
-  - delay: 30
-    content: "⸨\e[107;97m#########\e[0m\e[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂\e[0m⸩ ⠦ idealTree:lib: \e[32;40mtiming\e[0m \e[35midealTree:#root\e[0m Completed in 319ms\e[0m\e[K\r"
-  - delay: 30
-    content: "⸨\e[107;97m#########\e[0m\e[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂\e[0m⸩ ⠦ idealTree:lib: \e[32;40mtiming\e[0m \e[35midealTree:#root\e[0m Completed in 319ms\e[0m\e[K\r"
-  - delay: 30
-    content: "⸨\e[107;97m#########\e[0m\e[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂\e[0m⸩ ⠼ idealTree:lib: \e[32;40mtiming\e[0m \e[35midealTree:#root\e[0m Completed in 319ms\e[0m\e[K\r"
-  - delay: 30
-    content: "⸨\e[107;97m#########\e[0m\e[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂\e[0m⸩ ⠸ idealTree:lib: \e[32;40mtiming\e[0m \e[35midealTree:#root\e[0m Completed in 319ms\e[0m\e[K\r"
-  - delay: 30
-    content: "⸨\e[107;97m#########\e[0m\e[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂\e[0m⸩ ⠇ idealTree:lib: \e[32;40mtiming\e[0m \e[35midealTree:#root\e[0m Completed in 319ms\e[0m\e[K\r"
-  - delay: 30
-    content: "⸨\e[107;97m#########\e[0m\e[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂\e[0m⸩ ⠴ idealTree:lib: \e[32;40mtiming\e[0m \e[35midealTree:#root\e[0m Completed in 319ms\e[0m\e[K\r"
-  - delay: 30
-    content: "⸨\e[107;97m#########\e[0m\e[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂\e[0m⸩ ⠋ idealTree:lib: \e[32;40mtiming\e[0m \e[35midealTree:#root\e[0m Completed in 319ms\e[0m\e[K\r"
-  - delay: 30
-    content: "⸨\e[107;97m#########\e[0m\e[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂\e[0m⸩ ⠙ idealTree:lib: \e[32;40mtiming\e[0m \e[35midealTree:#root\e[0m Completed in 319ms\e[0m\e[K\r"
-  - delay: 30
-    content: "⸨\e[107;97m#########\e[0m\e[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂\e[0m⸩ ⠸ idealTree:lib: \e[32;40mtiming\e[0m \e[35midealTree:#root\e[0m Completed in 319ms\e[0m\e[K\r"
-  - delay: 30
-    content: "⸨\e[107;97m#########\e[0m\e[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂\e[0m⸩ ⠦ idealTree:lib: \e[32;40mtiming\e[0m \e[35midealTree:#root\e[0m Completed in 319ms\e[0m\e[K\r"
-  - delay: 30
-    content: "⸨\e[107;97m#########\e[0m\e[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂\e[0m⸩ ⠸ idealTree: \e[32;40mtiming\e[0m \e[35midealTree\e[0m Completed in 901ms\e[0m\e[K\r"
-  - delay: 30
-    content: "⸨\e[107;97m#########\e[0m\e[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂\e[0m⸩ ⠦ reify:chalk: \e[7msill\e[0m \e[35maudit\e[0m bulk request {\e[0m\e[K\r"
-  - delay: 30
-    content: "⸨\e[107;97m#########\e[0m\e[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂\e[0m⸩ ⠦ reify:chalk: \e[7msill\e[0m \e[35maudit\e[0m bulk request {\e[0m\e[K\r"
-  - delay: 30
-    content: "⸨\e[107;97m#########\e[0m\e[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂\e[0m⸩ ⠙ reify:chalk: \e[7msill\e[0m \e[35maudit\e[0m bulk request {\e[0m\e[K\r"
-  - delay: 30
-    content: "⸨\e[107;97m#########\e[0m\e[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂\e[0m⸩ ⠙ reify:chalk: \e[7msill\e[0m \e[35maudit\e[0m bulk request {\e[0m\e[K\r"
-  - delay: 30
-    content: "⸨\e[107;97m#########\e[0m\e[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂\e[0m⸩ ⠹ reify:ansi-regex: \e[32;40mtiming\e[0m \e[35mreify:audit\e[0m Completed in 314ms\e[0m\e[K\r"
-  - delay: 30
-    content: "⸨\e[107;97m############\e[0m\e[100;90m⠂⠂⠂⠂⠂⠂\e[0m⸩ ⠦ reify:supports-color: \e[32;40mhttp\e[0m \e[35mfetch\e[0m GET 200 https://registry.npmjs.org/supports-color/-/supports-color-7.2.0.tgz 320ms (\e[0m\e[K\r"
-  - delay: 30
-    content: "⸨\e[107;97m##############\e[0m\e[100;90m⠂⠂⠂⠂\e[0m⸩ ⠦ reify:base64-js: \e[32;40mhttp\e[0m \e[35mfetch\e[0m GET 200 https://registry.npmjs.org/base64-js/-/base64-js-1.5.1.tgz 460ms (cache miss)\e[0m\e[K\r"
-  - delay: 30
-    content: "⸨\e[107;97m################\e[0m\e[100;90m⠂⠂\e[0m⸩ ⠼ reify:wcwidth: \e[32;40mhttp\e[0m \e[35mfetch\e[0m GET 200 https://registry.npmjs.org/wcwidth/-/wcwidth-1.0.1.tgz 462ms (cache miss)\e[0m\e[K\r"
-  - delay: 30
-    content: "⸨\e[107;97m##################\e[0m⸩ ⠹ reify:node-fetch: \e[32;40mhttp\e[0m \e[35mfetch\e[0m GET 200 https://registry.npmjs.org/node-fetch/-/node-fetch-2.6.7.tgz 424ms (cache miss)\e[0m\e[K\r\r\e[K\e[?25h\r\nadded 38 packages, and audited 39 packages in 2s\r\n\r\n11 packages are looking for funding\r\n  run `npm fund` for details\r\n\r\nfound \e[32m\e[1m0\e[22m\e[39m vulnerabilities\r\n"
-  - delay: 30
-    content: "\e[01;32mgitpod\e[00m \e[01;34m/workspace/LeetCode-Dump\e[00m (main) $ "
+    content: "\e[01;32mjacob\e[00m \e[01;34m/leetcode\e[00m (main) $ "
   - delay: 1000
     content: l
   - delay: 50
@@ -11761,6 +11707,6 @@ records:
   - delay: 100
     content: "\e[?25h"
   - delay: 8
-    content: "\e[01;32mgitpod\e[00m \e[01;34m/workspace/LeetCode-Dump\e[00m (main) $ "
+    content: "\e[01;32mjacob\e[00m \e[01;34m/leetcode\e[00m (main) $ "
   - delay: 2000
     content: "logout\r\n"
