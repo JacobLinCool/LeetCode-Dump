@@ -3,7 +3,7 @@ import path from "node:path";
 import { Credential, LeetCode } from "leetcode-query";
 import fetch from "node-fetch";
 import Ora from "ora";
-import { EXTS, LEETCODE_BASE, LEETCODE_DETAIL_BASE, README_TEMPLATE } from "./constants";
+import { COMMENTS, EXTS, LEETCODE_BASE, LEETCODE_DETAIL_BASE, README_TEMPLATE } from "./constants";
 import { readable_memory, retry, sleep } from "./utils";
 
 let leetcode: LeetCode;
@@ -66,14 +66,16 @@ export async function dump(
         ];
 
         for (const lang in submissions) {
-            const ext = EXTS[lang];
+            const ext = EXTS[lang as keyof typeof EXTS];
             const file = path.resolve(folder, `${titleSlug}${ext}`);
             if (!fs.existsSync(file)) {
                 const submission = await get_submission(submissions[lang].id);
 
-                const info = `// ${problem.questionFrontendId}. ${problem.title} (${new Date(
+                const info = `${COMMENTS[lang as keyof typeof COMMENTS]} ${
+                    problem.questionFrontendId
+                }. ${problem.title} (${new Date(
                     +submissions[lang].timestamp * 1e3,
-                ).toLocaleDateString()})\n// Runtime: ${
+                ).toLocaleDateString()})\n${COMMENTS[lang as keyof typeof COMMENTS]} Runtime: ${
                     submission.runtime
                 } ms (${submission.runtime_percentile.toFixed(2)}%) Memory: ${readable_memory(
                     submission.memory,

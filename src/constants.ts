@@ -1,4 +1,27 @@
-export const EXTS: Record<string, string> = {
+export const LANGS = [
+    "cpp",
+    "java",
+    "python",
+    "python3",
+    "c",
+    "csharp",
+    "javascript",
+    "ruby",
+    "swift",
+    "golang",
+    "scala",
+    "kotlin",
+    "rust",
+    "php",
+    "typescript",
+    "racket",
+    "erlang",
+    "elixir",
+] as const;
+
+export const EXTS: {
+    [key in typeof LANGS[number]]: string;
+} = {
     cpp: ".cpp",
     java: ".java",
     python: ".py",
@@ -17,6 +40,29 @@ export const EXTS: Record<string, string> = {
     racket: ".rkt",
     erlang: ".erl",
     elixir: ".ex",
+};
+
+export const COMMENTS: {
+    [key in typeof LANGS[number]]: string;
+} = {
+    cpp: "//",
+    java: "//",
+    python: "#",
+    python3: "#",
+    c: "//",
+    csharp: "//",
+    javascript: "//",
+    ruby: "#",
+    swift: "//",
+    golang: "//",
+    scala: "//",
+    kotlin: "//",
+    rust: "//",
+    php: "//",
+    typescript: "//",
+    racket: ";",
+    erlang: "%",
+    elixir: "#",
 };
 
 export const LEETCODE_BASE = "https://leetcode.com";
