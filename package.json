@@ -1,6 +1,6 @@
 {
     "name": "leetcode-dump",
-    "version": "0.3.1",
+    "version": "0.3.2",
     "description": "Dump Your LeetCode Solutions, and generate a static website to share your solutions.",
     "main": "lib/index.js",
     "bin": {

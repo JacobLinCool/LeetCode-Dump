@@ -44,7 +44,9 @@ export async function build(
         fs.writeFileSync(path.resolve(tmp, slug, "index.md"), doc);
     }
 
-    fs.rmSync(output, { recursive: true });
+    if (fs.existsSync(output)) {
+        fs.rmSync(output, { recursive: true });
+    }
     await build_site(tmp, output, config);
     fs.rmSync(tmp, { recursive: true });
 }
