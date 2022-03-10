@@ -3,6 +3,7 @@ import path from "node:path";
 import { Credential, LeetCode } from "leetcode-query";
 import fetch from "node-fetch";
 import Ora from "ora";
+import TurndownService from "turndown";
 import {
     COMMENTS,
     EXTS,
@@ -13,70 +14,76 @@ import {
 } from "./constants";
 import { readable_memory, retry, sleep } from "./utils";
 
+const turndown = new TurndownService();
+turndown.addRule("pre", {
+    filter: "pre",
+    replacement: (content, node: { textContent: string }) =>
+        "\n```\n" + node.textContent.replace("```", "\\`\\`\\`").trim() + "\n```\n",
+});
+
 let leetcode: LeetCode;
 let max_retry = 3;
 
-export async function dump(
-    session: string,
-    output: string,
-    clean: boolean,
-    cooldown: number,
-    timezone: string,
-    pure: boolean,
-    max: number,
-): Promise<void> {
-    process.env.TZ = timezone;
-    max_retry = max;
-
-    const dir = path.resolve(output);
-    if (fs.existsSync(dir) && clean) {
-        fs.rmSync(dir, { recursive: true });
-    }
-    if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir, { recursive: true });
-    }
-
-    const credential = new Credential();
-    await credential.init(session);
-    leetcode = new LeetCode(credential);
+export async function dump({
+    session,
+    output = path.resolve("leetcode"),
+    clean = true,
+    cooldown = 250,
+    timezone = "Asia/Taipei",
+    pure = false,
+    retry = 3,
+}: {
+    session: string;
+    output: string;
+    clean: boolean;
+    cooldown: number;
+    timezone: string;
+    pure: boolean;
+    retry: number;
+}): Promise<void> {
+    const { dir } = await setup({ timezone, retry, output, clean, session });
 
     const spinner = Ora({ text: "Scanning...", spinner: "bouncingBar" }).start();
     const { list, ac } = await get_list();
     spinner.succeed(`Scan Done. (${list.length} Problems, ${ac.length} Accepted)`);
     await sleep(cooldown);
 
-    const table: [string, string, string, Map<string, string>][] = [];
+    const table: [string, string, string, string[]][] = [];
     spinner.start("Dumping Submissions...");
     for (let i = 0; i < ac.length; i++) {
         spinner.text = `Dumping Submissions... (${i + 1}/${ac.length})`;
-        const { titleSlug } = ac[i];
-        const problem = await get_problem(titleSlug);
+        const { titleSlug: slug } = ac[i];
+        const problem = await get_problem(slug);
         const folder = path.resolve(dir, `${problem.questionFrontendId}. ${problem.title}`);
         if (!fs.existsSync(folder)) {
             fs.mkdirSync(folder, { recursive: true });
         }
+
         fs.writeFileSync(
             path.resolve(folder, "README.md"),
             `# ${problem.questionFrontendId}. ${problem.title}\n\nTags: ${problem.topicTags
                 .map((t) => "`" + t.name + "`")
-                .join(", ")}\n\n${problem.content}`,
+                .join(", ")}\n\n${turndown.turndown(problem.content)}`,
         );
-        const submissions = await get_submissions(titleSlug);
+
+        fs.writeFileSync(path.resolve(folder, "NOTE.md"), problem.note);
+
+        const submissions = await get_submissions(slug);
         spinner.text += ` [${Object.keys(submissions).join(", ")}]`;
         await sleep(cooldown);
 
-        const row: [string, string, string, Map<string, string>] = [
+        const row: [string, string, string, string[]] = [
             `[${problem.questionFrontendId}. ${problem.title}](./${encodeURI(
                 path.basename(folder),
-            )}) [🔗](${LEETCODE_SLUG_BASE}${titleSlug}/)`,
+            )}) [🔗](${LEETCODE_SLUG_BASE}${slug}/)`,
             problem.difficulty,
             problem.topicTags.map((t) => "`" + t.name + "`").join(", "),
-            new Map(),
+            [],
         ];
 
         for (const lang in submissions) {
             const ext = EXTS[lang as keyof typeof EXTS];
-            const file = path.resolve(folder, `${titleSlug}${ext}`);
+            const file = path.resolve(folder, `${slug}${ext}`);
             if (!fs.existsSync(file)) {
                 const submission = await get_submission(submissions[lang].id);
 
@@ -91,44 +98,51 @@ export async function dump(
                 )} (${submission.memory_percentile.toFixed(2)}%) \n\n`;
 
                 fs.writeFileSync(file, `${pure ? "" : info}${submission.code}`);
-                row[3].set(lang, `./${path.basename(folder)}/${titleSlug}${ext}`);
+                row[3].push(`[${lang}](${encodeURI(`./${path.basename(folder)}/${slug}${ext}`)})`);
                 await sleep(cooldown);
             }
         }
-
+        row[3].sort();
         table.push(row);
     }
     spinner.succeed("Submissions Dumped.");
 
-    const username = (
-        await retry(
-            () =>
-                leetcode.graphql({
-                    query: `query globalData { userStatus { username } }`,
-                    operationName: "globalData",
-                    variables: {},
-                }),
-            max_retry,
-        )
-    ).data.userStatus.username;
+    fs.writeFileSync(path.resolve(dir, "README.md"), await create_toc(table));
+}
 
-    const card_url = `https://leetcode.card.workers.dev/?username=${username}`;
-    const table_str = table
-        .map(([title, difficulty, tags, solutions]) => {
-            return `| ${title} | ${difficulty} | ${tags} | ${[...solutions.entries()]
-                .map(([lang, link]) => `[${lang}](${encodeURI(link)})`)
-                .join(" / ")} |`;
-        })
-        .join("\n");
+async function setup({
+    session,
+    output,
+    clean,
+    timezone,
+    retry,
+}: {
+    session: string;
+    output: string;
+    clean: boolean;
+    timezone: string;
+    retry: number;
+}) {
+    process.env.TZ = timezone;
+    max_retry = retry;
 
-    fs.writeFileSync(
-        path.resolve(dir, "README.md"),
-        README_TEMPLATE.replace("$card_url", card_url).replace("$table", table_str),
-    );
+    const dir = path.resolve(output);
+    if (fs.existsSync(dir) && clean) {
+        fs.rmSync(dir, { recursive: true });
+    }
+    if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+    }
+
+    const credential = new Credential();
+    await credential.init(session);
+    leetcode = new LeetCode(credential);
+
+    return { dir };
 }
 
 async function get_list() {
-    const ql = `query allQuestionsStatusesRaw { allQuestions: allQuestionsRaw { titleSlug questionId status } }`;
+    const ql = `query allQuestionsStatusesRaw { allQuestions: allQuestionsRaw { titleSlug questionFrontendId status } }`;
     const json = await retry(
         () =>
             leetcode.graphql({
@@ -140,12 +154,12 @@ async function get_list() {
     );
     const list = json.data.allQuestions as {
         titleSlug: string;
-        questionId: string;
+        questionFrontendId: string;
         status: string;
     }[];
     const ac = list
         .filter((item) => item.status === "ac")
-        .sort((a, b) => +a.questionId - +b.questionId);
+        .sort((a, b) => +a.questionFrontendId - +b.questionFrontendId);
     return { list, ac };
 }
 
@@ -153,17 +167,13 @@ async function get_problem(slug: string) {
     const ql = `
     query questionData($slug: String!) {
         question(titleSlug: $slug) {
-            questionFrontendId title content difficulty similarQuestions categoryTitle stats topicTags { name slug }
+            questionFrontendId title content difficulty similarQuestions categoryTitle stats topicTags { name slug } note
         }
     }`;
     const json = (
         await retry(
             () =>
-                leetcode.graphql({
-                    query: ql,
-                    operationName: "questionData",
-                    variables: { slug },
-                }),
+                leetcode.graphql({ query: ql, operationName: "questionData", variables: { slug } }),
             max_retry,
         )
     ).data.question as {
@@ -181,6 +191,7 @@ async function get_problem(slug: string) {
             totalSubmissionRaw: string;
             acRate: string;
         };
+        note: string;
     };
 
     json.similarQuestions = JSON.parse(json.similarQuestions as unknown as string);
@@ -274,4 +285,31 @@ async function get_submission(id: string) {
     }
 
     return result;
+}
+
+async function create_toc(table: [string, string, string, string[]][]) {
+    const username = await get_username();
+    const card = `[![LeetCode Stats Card](https://leetcode.card.workers.dev/?username=${username})](https://leetcode.com/${username}/)`;
+    const table_str = table
+        .map(
+            ([title, difficulty, tags, solutions]) =>
+                `| ${title} | ${difficulty} | ${tags} | ${solutions.join(" \\| ")} |`,
+        )
+        .join("\n");
+
+    return README_TEMPLATE.replace("$card", card).replace("$table", table_str);
+}
+
+async function get_username() {
+    return (
+        await retry(
+            () =>
+                leetcode.graphql({
+                    query: `query globalData { userStatus { username } }`,
+                    operationName: "globalData",
+                    variables: {},
+                }),
+            max_retry,
+        )
+    ).data.userStatus.username;
 }

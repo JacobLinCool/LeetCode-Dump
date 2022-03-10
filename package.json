@@ -1,7 +1,7 @@
 {
     "name": "leetcode-dump",
-    "version": "0.2.1",
-    "description": "Dump Your LeetCode Solutions.",
+    "version": "0.3.1",
+    "description": "Dump Your LeetCode Solutions, and generate a static website to share your solutions.",
     "main": "lib/index.js",
     "bin": {
         "leetcode-dump": "lib/index.js"
@@ -12,7 +12,7 @@
         "dev": "tsup --watch",
         "build": "npm run format && tsup",
         "docs": "typedoc ./src/",
-        "format": "prettier --write '**/*.{js,ts,jsx,tsx,json,yml,yaml,md,html}' '!lib' '!docs' '!leetcode'",
+        "format": "prettier --write '**/*.{js,ts,jsx,tsx,json,yml,yaml,md,html}' '!lib' '!docs' '!leetcode' '!site' '!site_tmp' '!demo.yml'",
         "lint": "eslint ."
     },
     "keywords": [
@@ -30,6 +30,7 @@
         "@types/jest": "^27.4.1",
         "@types/node": "^17.0.21",
         "@types/node-fetch": "2.5.12",
+        "@types/turndown": "^5.0.1",
         "@typescript-eslint/eslint-plugin": "^5.13.0",
         "@typescript-eslint/parser": "^5.13.0",
         "eslint": "^8.10.0",
@@ -42,11 +43,16 @@
         "typescript": "^4.6.2"
     },
     "dependencies": {
+        "@vuepress/plugin-medium-zoom": "^2.0.0-beta.36",
+        "@vuepress/plugin-nprogress": "^2.0.0-beta.36",
+        "@vuepress/plugin-search": "^2.0.0-beta.36",
         "chalk": "4.1.2",
         "commander": "9.0.0",
         "dotenv": "16.0.0",
         "leetcode-query": "0.0.7",
         "node-fetch": "2.6.7",
-        "ora": "5.4.1"
+        "ora": "5.4.1",
+        "turndown": "^7.1.1",
+        "vuepress": "^2.0.0-beta.36"
     }
 }

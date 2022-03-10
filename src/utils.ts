@@ -37,3 +37,12 @@ export async function retry<T>(func: () => T | Promise<T>, max_retry = 3): Promi
     }
     throw error;
 }
+
+export function sort_object<T>(obj: { [key: string]: T }): { [key: string]: T } {
+    const keys = Object.keys(obj).sort();
+    const sorted: { [key: string]: T } = {};
+    for (const key of keys) {
+        sorted[key] = obj[key];
+    }
+    return sorted;
+}
