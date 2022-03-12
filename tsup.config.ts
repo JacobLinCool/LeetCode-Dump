@@ -1,7 +1,7 @@
 import { defineConfig } from "tsup";
 
 export default defineConfig((options) => ({
-    entry: ["src/index.ts", "src/dump.ts"],
+    entry: ["src/index.ts", "src/leetcode-dump.ts"],
     outDir: "lib",
     target: "node14",
     format: ["cjs", "esm"],

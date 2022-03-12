@@ -14,12 +14,16 @@ import {
 } from "./constants";
 import { readable_memory, retry, sleep } from "./utils";
 
-const turndown = new TurndownService();
-turndown.addRule("pre", {
-    filter: "pre",
-    replacement: (content, node: { textContent: string }) =>
-        "\n```\n" + node.textContent.replace("```", "\\`\\`\\`").trim() + "\n```\n",
-});
+const turndown = new TurndownService()
+    .addRule("pre", {
+        filter: "pre",
+        replacement: (content, node: { textContent: string }) =>
+            "\n```\n" + node.textContent.replace("```", "\\`\\`\\`").trim() + "\n```\n",
+    })
+    .addRule("sup", {
+        filter: "sup",
+        replacement: (content) => `^${content}`,
+    });
 
 let leetcode: LeetCode;
 let max_retry = 3;
@@ -32,28 +36,30 @@ export async function dump({
     timezone = "Asia/Taipei",
     pure = false,
     retry = 3,
+    verbose = true,
 }: {
     session: string;
-    output: string;
-    clean: boolean;
-    cooldown: number;
-    timezone: string;
-    pure: boolean;
-    retry: number;
+    output?: string;
+    clean?: boolean;
+    cooldown?: number;
+    timezone?: string;
+    pure?: boolean;
+    retry?: number;
+    verbose?: boolean;
 }): Promise<void> {
     const { dir } = await setup({ timezone, retry, output, clean, session });
 
-    const spinner = Ora({ text: "Scanning...", spinner: "bouncingBar" }).start();
+    const spinner = verbose ? Ora({ text: "Scanning...", spinner: "bouncingBar" }).start() : null;
     const { list, ac } = await get_list();
-    spinner.succeed(`Scan Done. (${list.length} Problems, ${ac.length} Accepted)`);
+    spinner?.succeed(`Scan Done. (${list.length} Problems, ${ac.length} Accepted)`);
     await sleep(cooldown);
 
     const table: [string, string, string, string[]][] = [];
-    spinner.start("Dumping Submissions...");
     for (let i = 0; i < ac.length; i++) {
-        spinner.text = `Dumping Submissions... (${i + 1}/${ac.length})`;
+        spinner?.start(`Dumping Submissions... (${i + 1}/${ac.length})`);
         const { titleSlug: slug } = ac[i];
         const problem = await get_problem(slug);
+        spinner && (spinner.text += ` ${problem.questionFrontendId}. ${problem.title}`);
         const folder = path.resolve(dir, `${problem.questionFrontendId}. ${problem.title}`);
         if (!fs.existsSync(folder)) {
             fs.mkdirSync(folder, { recursive: true });
@@ -69,7 +75,7 @@ export async function dump({
         fs.writeFileSync(path.resolve(folder, "NOTE.md"), problem.note);
 
         const submissions = await get_submissions(slug);
-        spinner.text += ` [${Object.keys(submissions).join(", ")}]`;
+        spinner && (spinner.text += ` [${Object.keys(submissions).join(", ")}]`);
         await sleep(cooldown);
 
         const row: [string, string, string, string[]] = [
@@ -104,8 +110,14 @@ export async function dump({
         }
         row[3].sort();
         table.push(row);
+
+        spinner?.succeed(
+            `Dumped ${problem.questionFrontendId}. ${problem.title} [${Object.keys(
+                submissions,
+            ).join(", ")}]`,
+        );
     }
-    spinner.succeed("Submissions Dumped.");
+    spinner?.succeed("Submissions Dumped.");
 
     fs.writeFileSync(path.resolve(dir, "README.md"), await create_toc(table));
 }
@@ -226,7 +238,12 @@ async function get_submissions(slug: string) {
             if (statusDisplay !== "Accepted") {
                 continue;
             }
-            if (!list[lang] || parseInt(runtime) < parseInt(list[lang].runtime)) {
+            if (
+                !list[lang] ||
+                parseInt(runtime) < parseInt(list[lang].runtime) ||
+                (parseInt(runtime) === parseInt(list[lang].runtime) &&
+                    parseInt(timestamp) > parseInt(list[lang].timestamp))
+            ) {
                 list[lang] = { id, timestamp, runtime };
             }
         }

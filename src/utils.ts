@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import chalk from "chalk";
+import { EXTS } from "./constants";
 
 export function get_package_meta(): {
     version: string;
@@ -45,4 +46,45 @@ export function sort_object<T>(obj: { [key: string]: T }): { [key: string]: T } 
         sorted[key] = obj[key];
     }
     return sorted;
+}
+
+export function lang_to_ext(lang: string): string {
+    lang = lang.toLowerCase();
+    return EXTS[lang as keyof typeof EXTS] || `.${lang}`;
+}
+
+export function ext_to_lang(ext: string): string {
+    ext = ext.replace(/^[^.]/, ".$&").toLowerCase();
+    for (const lang in EXTS) {
+        if (EXTS[lang as keyof typeof EXTS] === ext) {
+            return lang;
+        }
+    }
+    return ext.replace(/^\./, "");
+}
+
+export class Logger {
+    constructor(public name = "", public verbose = 3) {
+        if (verbose) {
+            this.log(`Verbose Mode: ${verbose}`);
+        }
+    }
+
+    log(...args: unknown[]): void {
+        if (this.verbose >= 3) {
+            console.log(chalk.gray(`[${this.name}]`), ...args);
+        }
+    }
+
+    warn(...args: unknown[]): void {
+        if (this.verbose >= 2) {
+            console.warn(chalk.yellowBright(`[${this.name}]`), ...args);
+        }
+    }
+
+    error(...args: unknown[]): void {
+        if (this.verbose >= 1) {
+            console.error(chalk.redBright(`[${this.name}]`), ...args);
+        }
+    }
 }

@@ -1,10 +1,11 @@
 {
     "name": "leetcode-dump",
-    "version": "0.3.2",
-    "description": "Dump Your LeetCode Solutions, and generate a static website to share your solutions.",
+    "version": "0.4.0",
+    "description": "Dump your LeetCode solutions, and generate a static website to show them.",
     "main": "lib/index.js",
     "bin": {
-        "leetcode-dump": "lib/index.js"
+        "leetcode-dump": "lib/leetcode-dump.js",
+        "lcd": "lib/leetcode-dump.js"
     },
     "scripts": {
         "test": "jest --coverage",
@@ -49,6 +50,7 @@
         "chalk": "4.1.2",
         "commander": "9.0.0",
         "dotenv": "16.0.0",
+        "fs-extra": "^10.0.1",
         "leetcode-query": "0.0.7",
         "node-fetch": "2.6.7",
         "ora": "5.4.1",
