@@ -25,7 +25,7 @@ export const EXTS: {
     cpp: ".cpp",
     java: ".java",
     python: ".py",
-    python3: ".py",
+    python3: ".py3",
     c: ".c",
     csharp: ".cs",
     javascript: ".js",
