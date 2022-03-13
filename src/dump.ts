@@ -32,7 +32,7 @@ export async function dump({
     session,
     output = path.resolve("leetcode"),
     clean = true,
-    cooldown = 250,
+    cooldown = 200,
     timezone = "Asia/Taipei",
     pure = false,
     retry = 3,
@@ -257,51 +257,49 @@ async function get_submissions(slug: string) {
 }
 
 async function get_submission(id: string) {
-    const res = await retry(
-        () =>
-            fetch(`${LEETCODE_DETAIL_BASE}${id}/`, {
-                headers: {
-                    Cookie: `LEETCODE_SESSION=${leetcode.credential.session}`,
-                    Referer: LEETCODE_BASE,
-                },
-            }),
-        max_retry,
-    );
-    const raw = await res.text();
-    const data = raw.match(/var pageData = ({[^]+?});/)?.[1];
-    const json = new Function("return " + data)();
-    const result = {
-        runtime: +json.runtime,
-        runtime_distribution: json.runtimeDistributionFormatted
-            ? (JSON.parse(json.runtimeDistributionFormatted).distribution.map(
-                  (item: [string, number]) => [+item[0], item[1]],
-              ) as [number, number][])
-            : null,
-        runtime_percentile: 0,
-        memory: +json.memory,
-        memory_distribution: json.memoryDistributionFormatted
-            ? (JSON.parse(json.memoryDistributionFormatted).distribution.map(
-                  (item: [string, number]) => [+item[0], item[1]],
-              ) as [number, number][])
-            : null,
-        memory_percentile: 0,
-        code: json.submissionCode,
-    };
+    return await retry(async () => {
+        const res = await fetch(`${LEETCODE_DETAIL_BASE}${id}/`, {
+            headers: {
+                Cookie: `LEETCODE_SESSION=${leetcode.credential.session}`,
+                Referer: LEETCODE_BASE,
+            },
+        });
+        const raw = await res.text();
+        const data = raw.match(/var pageData = ({[^]+?});/)?.[1];
+        const json = new Function("return " + data)();
+        const result = {
+            runtime: +json.runtime,
+            runtime_distribution: json.runtimeDistributionFormatted
+                ? (JSON.parse(json.runtimeDistributionFormatted).distribution.map(
+                      (item: [string, number]) => [+item[0], item[1]],
+                  ) as [number, number][])
+                : null,
+            runtime_percentile: 0,
+            memory: +json.memory,
+            memory_distribution: json.memoryDistributionFormatted
+                ? (JSON.parse(json.memoryDistributionFormatted).distribution.map(
+                      (item: [string, number]) => [+item[0], item[1]],
+                  ) as [number, number][])
+                : null,
+            memory_percentile: 0,
+            code: json.submissionCode,
+        };
 
-    if (result.runtime_distribution) {
-        result.runtime_percentile = result.runtime_distribution.reduce(
-            (acc, [usage, p]) => acc + (usage >= result.runtime ? p : 0),
-            0,
-        );
-    }
-    if (result.memory_distribution) {
-        result.memory_percentile = result.memory_distribution.reduce(
-            (acc, [usage, p]) => acc + (usage >= result.memory / 1000 ? p : 0),
-            0,
-        );
-    }
+        if (result.runtime_distribution) {
+            result.runtime_percentile = result.runtime_distribution.reduce(
+                (acc, [usage, p]) => acc + (usage >= result.runtime ? p : 0),
+                0,
+            );
+        }
+        if (result.memory_distribution) {
+            result.memory_percentile = result.memory_distribution.reduce(
+                (acc, [usage, p]) => acc + (usage >= result.memory / 1000 ? p : 0),
+                0,
+            );
+        }
 
-    return result;
+        return result;
+    }, max_retry);
 }
 
 async function create_toc(table: [string, string, string, string[]][]) {

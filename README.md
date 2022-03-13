@@ -1,6 +1,14 @@
-# LeetCode-Dump
+# LeetCode Dump
 
-Dump your LeetCode solutions, and generate a static website to show them.
+<p align="center">
+  Dump your LeetCode solutions, and generate a static website to show them.
+</p>
+
+<p align="center">
+  <a href="#install">Install</a> |
+  <a href="#usage">Usage</a> |
+  <a href="#github-action">GitHub Action</a>
+</p>
 
 ## Install
 
@@ -90,6 +98,8 @@ leetcode-dump transform
 
 If you install `leetcode-dump` globally, you can use `lcd`, the alias of `leetcode-dump`, as a command line tool.
 
-## GitHub Action Usage
+## GitHub Action
+
+[There is a Template, you can simply use it and setup in a minute.](https://github.com/JacobLinCool/LeetCode-Solutions-Template)
 
 [Example Repository](https://github.com/JacobLinCool/LeetCode-Solutions)

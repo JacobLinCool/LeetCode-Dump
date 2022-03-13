@@ -26,7 +26,11 @@ export function sleep(ms: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-export async function retry<T>(func: () => T | Promise<T>, max_retry = 3): Promise<T> {
+export async function retry<T>(
+    func: () => T | Promise<T>,
+    max_retry = 3,
+    cooldown = 5_000,
+): Promise<T> {
     let error: Error | null = null;
     for (let retry = 0; retry < max_retry; retry++) {
         try {
@@ -34,9 +38,18 @@ export async function retry<T>(func: () => T | Promise<T>, max_retry = 3): Promi
         } catch (err) {
             console.error(chalk.redBright(err));
             error = err as Error;
+            await sleep(cooldown);
         }
     }
     throw error;
+}
+
+export async function cooldown<T>(func: () => T | Promise<T>, cd = 500): Promise<T> {
+    const start = Date.now();
+    const result = await func();
+    const end = Date.now();
+    await sleep(cd - (end - start));
+    return result;
 }
 
 export function sort_object<T>(obj: { [key: string]: T }): { [key: string]: T } {

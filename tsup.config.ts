@@ -6,7 +6,7 @@ export default defineConfig((options) => ({
     target: "node14",
     format: ["cjs", "esm"],
     clean: true,
-    splitting: false,
+    // splitting: false,
     // minify: !options.watch,
     dts: options.watch ? false : { resolve: true },
 }));
