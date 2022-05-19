@@ -33,16 +33,16 @@ export async function build(
     if (fs.existsSync(output)) {
         fs.rmSync(output, { recursive: true });
     }
-    await build_site(
-        workspace,
-        output,
-        config
-            ? JSON.parse(fs.readFileSync(config, "utf8"))
-            : {
-                  plugins: [[require.resolve("@vuepress/plugin-search"), {}]],
-                  title: "LeetCode Solutions",
-              },
-    );
+
+    const repo = process.env.GITHUB_ACTION_REPOSITORY?.split("/");
+
+    await build_site(workspace, output, {
+        plugins: [[require.resolve("@vuepress/plugin-search"), {}]],
+        title: "LeetCode Solutions",
+        description: `${repo ? repo[0] + "'s" : "My"} LeetCode Solutions`,
+        base: repo ? `/${repo[1]}/` : "/",
+        ...safe_parse(config),
+    });
     fs.rmSync(workspace, { recursive: true });
     logger.log("Build Complete");
 }
@@ -58,4 +58,16 @@ async function build_site(workspace: string, dest: string, config?: unknown): Pr
 
     execSync(`${exe} build source --dest site`, { stdio: "inherit", cwd: workspace });
     fs.moveSync(path.resolve(workspace, "site"), dest, { overwrite: true });
+}
+
+function safe_parse(path?: string) {
+    if (!path) {
+        return undefined;
+    }
+
+    try {
+        return JSON.parse(fs.readFileSync(path, "utf8"));
+    } catch {
+        return undefined;
+    }
 }
