@@ -15,6 +15,7 @@ jobs:
             - name: Install PNPM
               uses: pnpm/action-setup@v2.2.1
               with:
+                  version: latest
                   run_install: true
 
             - name: Transpile
