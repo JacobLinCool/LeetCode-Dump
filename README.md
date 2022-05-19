@@ -7,8 +7,18 @@
 <p align="center">
   <a href="#install">Install</a> |
   <a href="#usage">Usage</a> |
-  <a href="#github-action">GitHub Action</a>
+  <a href="#github-action">GitHub Actions</a>
 </p>
+
+## Features
+
+- Dump your LeetCode solutions in multiple languages.
+  - Including code, note, runtime speed, memory usage, timestamp ...
+- Generate a static website to show your solutions.
+  - Index page, code highlight, search bar ...
+  - See [screenshots](#screenshots) for more details.
+- Easy to use.
+  - Through `npx`, GitHub Actions, or Docker.
 
 ## Install
 
@@ -103,3 +113,58 @@ If you install `leetcode-dump` globally, you can use `lcd`, the alias of `leetco
 [There is a Template, you can simply use it and setup in a minute.](https://github.com/JacobLinCool/LeetCode-Solutions-Template)
 
 [Example Repository](https://github.com/JacobLinCool/LeetCode-Solutions)
+
+## Docker Usage
+
+The docker image is available on [Docker Hub](https://hub.docker.com/r/jacoblincool/leetcode-dump).
+
+You can simply run it by using `docker run`:
+
+```sh
+# See Help
+docker run --rm jacoblincool/leetcode-dump --help
+# --rm: remove container after exit
+```
+
+```sh
+# Dump Solutions and Notes
+docker run --rm -v $(pwd)/leetcode:/usr/workspace/leetcode jacoblincool/leetcode-dump -s "YOUR_LEETCODE_SESSION"
+# --rm: remove container after exit
+# -v: mount volume, {current directory}/leetcode (host) <-> /usr/workspace/leetcode (container)
+```
+
+```sh
+# Build Static Site
+docker run --rm -v $(pwd)/leetcode:/usr/workspace/leetcode -v $(pwd)/site:/usr/workspace/site jacoblincool/leetcode-dump build
+# --rm: remove container after exit
+# -v: mount volumes:
+#           {current directory}/leetcode (host) <-> /usr/workspace/leetcode (container)
+#           {current directory}/site (host) <-> /usr/workspace/site (container)
+```
+
+You can simply change the mounted host volume to any location you want.
+
+If you want to change the mounted container volume, you should also pass related options to `leetcode-dump`:
+
+```sh
+# Custom Mounted Volumes
+
+docker run --rm -v $(pwd)/solutions:/lc/sol jacoblincool/leetcode-dump -s "YOUR_LEETCODE_SESSION" -o /lc/sol
+# mount $(pwd)/solutions (host) <-> /lc/sol (container), use option "-o" to specify output dir (in container)
+
+docker run --rm -v $(pwd):/lc jacoblincool/leetcode-dump build -s /lc/solutions -o /lc/site
+# mount $(pwd) (host) <-> /lc (container), including "solutions" dir in previous step
+# use option "-s" to specify source dir (in container) and "-o" to specify output dir (in container)
+```
+
+> You can add `-t` to `docker run` to enable more beautiful log.
+
+## Screenshots
+
+![screenshot-home](./screenshots/screenshot-home.png)
+
+![screenshot-problem](./screenshots/screenshot-problem.png)
+
+![screenshot-solution](./screenshots/screenshot-solution.png)
+
+![screenshot-code](./screenshots/screenshot-code.png)
