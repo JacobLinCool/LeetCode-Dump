@@ -1,6 +1,6 @@
 {
     "name": "leetcode-dump",
-    "version": "0.4.5",
+    "version": "0.4.6",
     "description": "Dump your LeetCode solutions, and generate a static website to show them.",
     "main": "lib/index.js",
     "bin": {
@@ -66,5 +66,13 @@
                 "webpack"
             ]
         }
-    }
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/JacobLinCool/LeetCode-Dump.git"
+    },
+    "bugs": {
+        "url": "https://github.com/JacobLinCool/LeetCode-Dump/issues"
+    },
+    "homepage": "https://github.com/JacobLinCool/LeetCode-Dump#readme"
 }
