@@ -79,7 +79,7 @@ export function ext_to_lang(ext: string): string {
 export class Logger {
     constructor(public name = "", public verbose = 3) {
         if (verbose) {
-            this.log(`Verbose Mode: ${verbose}`);
+            this.log(`Verbose Level: ${verbose}`);
         }
     }
 
