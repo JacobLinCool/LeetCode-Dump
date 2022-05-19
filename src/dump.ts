@@ -51,6 +51,12 @@ export async function dump({
 
     const spinner = verbose ? Ora({ text: "Scanning...", spinner: "bouncingBar" }).start() : null;
     const { list, ac } = await get_list();
+
+    if (ac.length === 0) {
+        spinner?.fail("No AC problem found! Is your session expired?");
+        process.exit(1);
+    }
+
     spinner?.succeed(`Scan Done. (${list.length} Problems, ${ac.length} Accepted)`);
     await sleep(cooldown);
 
