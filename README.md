@@ -40,13 +40,17 @@ Options:
   -V, --version              output the version number
   -s, --session <session>    Your LeetCode Session (default: "process.env.LEETCODE_SESSION")
   -o, --output <path>        Output Dir (default: "./leetcode")
-  -c, --clean                Clean Output Dir Before Start (default: true)
-  -cd, --cooldown <ms>       Cooldown Between Actions, in ms (default: "200")
+  -c, --clean                Clear Output Dir Before Start (default: false)
+  -l, --limit <rate>         Rate Limit <req>/<sec> (default: "20/10")
   -t, --timezone <timezone>  Your Timezone (default: "Asia/Taipei")
   -p, --pure                 Pure Mode, No Additional Informations to Add (default: false)
   -r, --retry <times>        Times to Retry When Fail (default: "3")
   -v, --verbose [bool]       Verbose Mode (default: true)
   -h, --help                 display help for command
+
+Commands:
+  build [options]            Build static site from dumped solutions
+  transform [options]        Transform dumped solutions to a Vuepress source
 ```
 
 Example:

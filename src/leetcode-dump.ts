@@ -20,8 +20,8 @@ program
         process.env.LEETCODE_SESSION || "process.env.LEETCODE_SESSION",
     )
     .option("-o, --output <path>", "Output Dir", path.resolve("leetcode"))
-    .option("-c, --clean", "Clean Output Dir Before Start", true)
-    .option("-cd, --cooldown <ms>", "Cooldown Between Actions, in ms", "200")
+    .option("-c, --clean", "Clear Output Dir Before Start", false)
+    .option("-l, --limit <rate>", "Rate Limit <req>/<sec>", "20/10")
     .option("-t, --timezone <timezone>", "Your Timezone", "Asia/Taipei")
     .option("-p, --pure", "Pure Mode, No Additional Informations to Add", false)
     .option("-r, --retry <times>", "Times to Retry When Fail", "3")
@@ -32,7 +32,7 @@ program
             session: opts.session,
             output: opts.output,
             clean: opts.clean,
-            cooldown: +opts.cooldown,
+            limit: opts.limit,
             timezone: opts.timezone,
             pure: opts.pure,
             retry: +opts.retry,
