@@ -101,3 +101,7 @@ export class Logger {
         }
     }
 }
+
+export function T(template: string, map: { [key: string]: unknown }): string {
+    return new Function(...Object.keys(map), "return `" + template + "`;")(...Object.values(map));
+}

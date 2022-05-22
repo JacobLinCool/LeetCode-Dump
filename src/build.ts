@@ -7,6 +7,7 @@ import { Logger } from "./utils";
 export async function build(
     source: string,
     output: string,
+    template_path: string,
     config?: string,
     verbose = false,
 ): Promise<void> {
@@ -27,7 +28,7 @@ export async function build(
     );
     logger.log("Symlinked node_modules");
 
-    transform(source, tmp, verbose);
+    transform(source, tmp, template_path, verbose);
     logger.log("Site transformed");
 
     if (fs.existsSync(output)) {

@@ -1,9 +1,13 @@
 import fs from "node:fs";
 import path from "node:path";
-import { DOC_TEMPLATE } from "./constants";
-import { Logger } from "./utils";
+import { Logger, T } from "./utils";
 
-export async function transform(source: string, output: string, verbose = false): Promise<void> {
+export async function transform(
+    source: string,
+    output: string,
+    template_path: string,
+    verbose = false,
+): Promise<void> {
     const logger = new Logger("Transform", verbose ? 3 : 0);
     source = path.resolve(source);
     output = path.resolve(output);
@@ -16,6 +20,10 @@ export async function transform(source: string, output: string, verbose = false)
     if (fs.existsSync(output)) {
         throw new Error(`[Transform] ${output} already exists`);
     }
+    if (!fs.existsSync(template_path)) {
+        throw new Error(`[Transform] ${template_path} does not exist`);
+    }
+    const template = fs.readFileSync(template_path, "utf8");
 
     try {
         fs.mkdirSync(output, { recursive: true });
@@ -28,7 +36,8 @@ export async function transform(source: string, output: string, verbose = false)
 
         const problems = fs
             .readdirSync(source)
-            .filter((name) => fs.statSync(path.resolve(source, name)).isDirectory());
+            .filter((name) => fs.statSync(path.resolve(source, name)).isDirectory())
+            .sort((a, b) => parseInt(a) - parseInt(b));
         logger.log(`${problems.length} problems found`);
 
         for (const problem of problems) {
@@ -38,7 +47,7 @@ export async function transform(source: string, output: string, verbose = false)
                 .replace("'", "")
                 .toLowerCase();
             fs.mkdirSync(path.resolve(output, slug), { recursive: true });
-            const doc = gen_doc(path.resolve(source, problem));
+            const doc = gen_doc(path.resolve(source, problem), template);
             fs.writeFileSync(path.resolve(output, slug, "index.md"), doc);
             logger.log(`${problem} written`);
         }
@@ -49,7 +58,7 @@ export async function transform(source: string, output: string, verbose = false)
     }
 }
 
-function gen_doc(src: string): string {
+function gen_doc(src: string, template: string): string {
     const title = path.basename(src);
 
     const problem = fs.readFileSync(path.resolve(src, "README.md"), "utf8");
@@ -62,18 +71,12 @@ function gen_doc(src: string): string {
         return { type: path.extname(name).slice(1), solution };
     });
 
-    return DOC_TEMPLATE.replace(/\$title/g, title)
-        .replace(/\$note/g, note)
-        .replace(/\$problem/g, problem.replace(/#[^\n]+\n/, "<br>\n\n"))
-        .replace(
-            /\$code/g,
-            solutions
-                .map(
-                    ({ type, solution }) =>
-                        `### ${type.toUpperCase()}\n\n\`\`\`${type}\n${solution}\n\`\`\``,
-                )
-                .join("\n\n"),
-        );
+    return T(template, {
+        title,
+        note,
+        problem: problem.replace(/#[^\n]+\n/, "<br>\n\n"),
+        code: solutions,
+    });
 }
 
 function fix(source: string) {
