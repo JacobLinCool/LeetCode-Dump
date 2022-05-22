@@ -19,6 +19,8 @@
   - See [screenshots](#screenshots) for more details.
 - Easy to use.
   - Through `npx`, GitHub Actions, or Docker.
+- Customizable.
+  - You can use "template" `-T` to design what the website should look like.
 
 ## Install
 
@@ -44,6 +46,7 @@ Options:
   -l, --limit <rate>         Rate Limit <req>/<sec> (default: "20/10")
   -t, --timezone <timezone>  Your Timezone (default: "Asia/Taipei")
   -p, --pure                 Pure Mode, No Additional Informations to Add (default: false)
+  -T, --template <path>      Template File for markdown index page
   -r, --retry <times>        Times to Retry When Fail (default: "3")
   -v, --verbose [bool]       Verbose Mode (default: true)
   -h, --help                 display help for command
@@ -72,6 +75,7 @@ Build static site from dumped solutions
 Options:
   -s, --source <path>   Source Dir (default: "./leetcode")
   -o, --output <path>   Output Dir (default: "./site")
+  -T, --template <path>  Template File for every document page
   -c, --config <path>   Vuepress Config Path
   -v, --verbose [bool]  Verbose Mode (default: true)
   -h, --help            display help for command
@@ -98,6 +102,7 @@ Transform dumped solutions to a Vuepress source
 Options:
   -s, --source <path>   Source Dir (default: "./leetcode")
   -o, --output <path>   Output Dir (default: "./site-source")
+  -T, --template <path>  Template File for every document page
   -v, --verbose [bool]  Verbose Mode (default: true)
   -h, --help            display help for command
 ```
