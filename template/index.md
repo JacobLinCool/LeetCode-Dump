@@ -6,5 +6,4 @@ ${card}
 
 | Problem | Difficulty | Tags | Solution |
 | ------- | ---------- | ---- | -------- |
-
 ${table}
