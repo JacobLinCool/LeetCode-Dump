@@ -35,13 +35,9 @@ export async function build(
         fs.rmSync(output, { recursive: true });
     }
 
-    const repo = process.env.GITHUB_ACTION_REPOSITORY?.split("/");
-
     await build_site(workspace, output, {
         plugins: [[require.resolve("@vuepress/plugin-search"), {}]],
         title: "LeetCode Solutions",
-        description: `${repo ? repo[0] + "'s" : "My"} LeetCode Solutions`,
-        base: repo ? `/${repo[1]}/` : "/",
         ...safe_parse(config),
     });
     fs.rmSync(workspace, { recursive: true });
