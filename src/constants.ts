@@ -68,30 +68,3 @@ export const COMMENTS: {
 export const LEETCODE_BASE = "https://leetcode.com";
 export const LEETCODE_DETAIL_BASE = LEETCODE_BASE + "/submissions/detail/";
 export const LEETCODE_SLUG_BASE = LEETCODE_BASE + "/problems/";
-
-export const README_TEMPLATE = `
-# LeetCode Solutions
-
-$card
-
-## Solutions
-
-| Problem | Difficulty | Tags | Solution |
-| ------- | ---------- | ---- | -------- |
-$table
-`;
-
-export const DOC_TEMPLATE = `---
-title: $title
----
-
-# $title
-
-$problem
-
-$note
-
-## Code
-
-$code
-`;

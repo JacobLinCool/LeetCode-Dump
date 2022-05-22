@@ -24,6 +24,11 @@ program
     .option("-l, --limit <rate>", "Rate Limit <req>/<sec>", "20/10")
     .option("-t, --timezone <timezone>", "Your Timezone", "Asia/Taipei")
     .option("-p, --pure", "Pure Mode, No Additional Informations to Add", false)
+    .option(
+        "-T, --template <path>",
+        "Template File for markdown index page",
+        path.resolve(__dirname, "../template/index.md"),
+    )
     .option("-r, --retry <times>", "Times to Retry When Fail", "3")
     .option("-v, --verbose [bool]", "Verbose Mode", true)
     .action(async () => {
@@ -37,6 +42,7 @@ program
             pure: opts.pure,
             retry: +opts.retry,
             verbose: opts.verbose,
+            template_path: opts.template,
         });
     });
 
@@ -46,10 +52,15 @@ const build_command = program
     .option("-s, --source <path>", "Source Dir", path.resolve("leetcode"))
     .option("-o, --output <path>", "Output Dir", path.resolve("site"))
     .option("-c, --config <path>", "Vuepress Config Path", undefined)
+    .option(
+        "-T, --template <path>",
+        "Template File for every document page",
+        path.resolve(__dirname, "../template/doc.md"),
+    )
     .option("-v, --verbose [bool]", "Verbose Mode", true)
     .action(() => {
         const opts = build_command.opts();
-        build(opts.source, opts.output, opts.config, opts.verbose);
+        build(opts.source, opts.output, opts.template, opts.config, opts.verbose);
     });
 
 const transform_command = program
@@ -57,10 +68,15 @@ const transform_command = program
     .description("Transform dumped solutions to a Vuepress source")
     .option("-s, --source <path>", "Source Dir", path.resolve("leetcode"))
     .option("-o, --output <path>", "Output Dir", path.resolve("site-source"))
+    .option(
+        "-T, --template <path>",
+        "Template File for every document page",
+        path.resolve(__dirname, "../template/doc.md"),
+    )
     .option("-v, --verbose [bool]", "Verbose Mode", true)
     .action(() => {
         const opts = transform_command.opts();
-        transform(opts.source, opts.output, opts.verbose);
+        transform(opts.source, opts.output, opts.template, opts.verbose);
     });
 
 program.parse();
