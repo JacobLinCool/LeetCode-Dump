@@ -1,6 +1,6 @@
 {
     "name": "leetcode-dump",
-    "version": "0.4.7",
+    "version": "0.4.8",
     "description": "Dump your LeetCode solutions, and generate a static website to show them.",
     "main": "lib/index.js",
     "bin": {
@@ -27,7 +27,8 @@
     "license": "MIT",
     "types": "lib/index.d.ts",
     "files": [
-        "lib"
+        "lib",
+        "template"
     ],
     "devDependencies": {
         "@trivago/prettier-plugin-sort-imports": "^3.2.0",
@@ -55,7 +56,7 @@
         "commander": "9.0.0",
         "dotenv": "16.0.0",
         "fs-extra": "^10.1.0",
-        "leetcode-query": "^0.1.3",
+        "leetcode-query": "^0.2.1",
         "node-fetch": "2.6.7",
         "ora": "5.4.1",
         "turndown": "^7.1.1",

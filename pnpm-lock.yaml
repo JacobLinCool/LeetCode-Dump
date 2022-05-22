@@ -19,7 +19,7 @@ specifiers:
     eslint-config-prettier: ^8.5.0
     fs-extra: ^10.1.0
     jest: ^27.5.1
-    leetcode-query: ^0.1.3
+    leetcode-query: ^0.2.1
     node-fetch: 2.6.7
     ora: 5.4.1
     prettier: ^2.6.2
@@ -40,7 +40,7 @@ dependencies:
     commander: 9.0.0
     dotenv: 16.0.0
     fs-extra: 10.1.0
-    leetcode-query: 0.1.3
+    leetcode-query: 0.2.1
     node-fetch: 2.6.7
     ora: 5.4.1
     turndown: 7.1.1
@@ -4495,10 +4495,10 @@ packages:
         engines: { node: ">=6" }
         dev: true
 
-    /leetcode-query/0.1.3:
+    /leetcode-query/0.2.1:
         resolution:
             {
-                integrity: sha512-uGnk4A+rGIcxWlxVgzHEIPh0ldyHzFBUGAsdWJH08ok/b8RSt9Q8Wh57L1cKggBQKl2rOow3wXeABQk7qn/j2w==,
+                integrity: sha512-UZW8Njpld/41riZWa7Zix7d+ePfvGZqwPyel345Acy1CsVgVxl/DUhz9FhuzAS2iQWnm5AJo36kVYsOLZlrdYA==,
             }
         dependencies:
             node-fetch: 2.6.7
