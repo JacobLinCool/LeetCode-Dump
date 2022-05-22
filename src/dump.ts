@@ -1,18 +1,10 @@
 import fs from "node:fs";
 import path from "node:path";
 import { Credential, LeetCode, Submission, Whoami } from "leetcode-query";
-import fetch from "node-fetch";
 import Ora from "ora";
 import TurndownService from "turndown";
-import {
-    COMMENTS,
-    EXTS,
-    LEETCODE_BASE,
-    LEETCODE_DETAIL_BASE,
-    LEETCODE_SLUG_BASE,
-    README_TEMPLATE,
-} from "./constants";
-import { readable_memory, retry } from "./utils";
+import { COMMENTS, EXTS, LEETCODE_SLUG_BASE } from "./constants";
+import { T, readable_memory, retry as rerun } from "./utils";
 
 const turndown = new TurndownService()
     .addRule("pre", {
@@ -25,9 +17,6 @@ const turndown = new TurndownService()
         replacement: (content) => `^${content}`,
     });
 
-let leetcode: LeetCode;
-let max_retry = 3;
-
 export async function dump({
     session,
     output = path.resolve("leetcode"),
@@ -37,6 +26,7 @@ export async function dump({
     pure = false,
     retry = 3,
     verbose = true,
+    template_path = path.resolve(__dirname, "../template/index.md"),
 }: {
     session: string;
     output?: string;
@@ -46,9 +36,9 @@ export async function dump({
     pure?: boolean;
     retry?: number;
     verbose?: boolean;
+    template_path?: string;
 }): Promise<void> {
     process.env.TZ = timezone;
-    max_retry = retry;
 
     const dir = path.resolve(output);
 
@@ -58,6 +48,11 @@ export async function dump({
     if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir, { recursive: true });
     }
+
+    if (!fs.existsSync(template_path)) {
+        throw new Error(`Template file not found: ${template_path}`);
+    }
+    const template = fs.readFileSync(template_path, "utf8");
 
     const cache_path = path.resolve(dir, ".cache.json");
     const cache: (Submission & { cached?: boolean })[] = fs.existsSync(cache_path)
@@ -77,7 +72,7 @@ export async function dump({
 
     const credential = new Credential();
     await credential.init(session);
-    leetcode = new LeetCode(credential);
+    const leetcode = new LeetCode(credential);
     leetcode.limiter.limit = +limit.split("/")[0];
     leetcode.limiter.interval = +limit.split("/")[1] * 1000;
 
@@ -94,7 +89,7 @@ export async function dump({
     if (config.skip.length > 0) {
         spinner?.info(`Config Found. Will skip ${config.skip.length} submissions`).start();
     }
-    const bests = await get_bests({ leetcode, spinner, max_retry, cache, skip: config.skip });
+    const bests = await get_bests({ leetcode, spinner, retry, cache, skip: config.skip });
 
     spinner?.succeed(`Scan Done. (${bests.size} Accepted Problems)`);
 
@@ -106,7 +101,7 @@ export async function dump({
             Map<string, Submission & { cached?: boolean }>,
         ];
         spinner?.start(`Dumping Submissions... (${i + 1}/${bests.size})`);
-        const problem = await leetcode.get_problem(slug); // intentionally keep for notes
+        const problem = await leetcode.problem(slug); // intentionally keep for notes
         spinner &&
             (spinner.text += ` ${problem.questionFrontendId}. ${problem.title} [${[
                 ...submissions.keys(),
@@ -138,7 +133,7 @@ export async function dump({
             const ext = EXTS[lang as keyof typeof EXTS];
             const file = path.resolve(folder, `${slug}${ext}`);
             if (!meta.cached) {
-                const submission = await get_submission(meta.id);
+                const submission = await rerun(() => leetcode.submission(meta.id), retry);
 
                 const info = `${COMMENTS[lang as keyof typeof COMMENTS]} ${
                     problem.questionFrontendId
@@ -165,7 +160,7 @@ export async function dump({
     }
     spinner?.succeed("All Submissions Dumped.");
 
-    fs.writeFileSync(path.resolve(dir, "README.md"), await create_toc(table, user));
+    fs.writeFileSync(path.resolve(dir, "README.md"), await create_toc(table, user, template));
 
     fs.writeFileSync(
         cache_path,
@@ -177,74 +172,37 @@ export async function dump({
     );
 }
 
-async function get_submission(id: number) {
-    return await retry(async () => {
-        const res = await fetch(`${LEETCODE_DETAIL_BASE}${id}/`, {
-            headers: {
-                Cookie: `LEETCODE_SESSION=${leetcode.credential.session}`,
-                Referer: LEETCODE_BASE,
-            },
-        });
-        const raw = await res.text();
-        const data = raw.match(/var pageData = ({[^]+?});/)?.[1];
-        const json = new Function("return " + data)();
-        const result = {
-            runtime: +json.runtime,
-            runtime_distribution: json.runtimeDistributionFormatted
-                ? (JSON.parse(json.runtimeDistributionFormatted).distribution.map(
-                      (item: [string, number]) => [+item[0], item[1]],
-                  ) as [number, number][])
-                : null,
-            runtime_percentile: 0,
-            memory: +json.memory,
-            memory_distribution: json.memoryDistributionFormatted
-                ? (JSON.parse(json.memoryDistributionFormatted).distribution.map(
-                      (item: [string, number]) => [+item[0], item[1]],
-                  ) as [number, number][])
-                : null,
-            memory_percentile: 0,
-            code: json.submissionCode,
-        };
-
-        if (result.runtime_distribution) {
-            result.runtime_percentile = result.runtime_distribution.reduce(
-                (acc, [usage, p]) => acc + (usage >= result.runtime ? p : 0),
-                0,
-            );
-        }
-        if (result.memory_distribution) {
-            result.memory_percentile = result.memory_distribution.reduce(
-                (acc, [usage, p]) => acc + (usage >= result.memory / 1000 ? p : 0),
-                0,
-            );
-        }
-
-        return result;
-    }, max_retry);
-}
-
-async function create_toc(table: [string, string, string, string[]][], user: Whoami) {
-    const card = `[![LeetCode Stats Card](https://leetcode.card.workers.dev/?username=${user.username})](https://leetcode.com/${user.username}/)`;
+async function create_toc(
+    table: [string, string, string, string[]][],
+    user: Whoami,
+    template: string,
+) {
+    const card = `[![LeetCode Stats Card](https://leetcode.card.workers.dev/?username=${user.username}&theme=auto)](https://leetcode.com/${user.username}/)`;
+    const regex = /\d+\./;
     const table_str = table
+        .sort(
+            (a, b) =>
+                parseInt(a[0].match(regex)?.[0] || "0") - parseInt(b[0].match(regex)?.[0] || "0"),
+        )
         .map(
             ([title, difficulty, tags, solutions]) =>
                 `| ${title} | ${difficulty} | ${tags} | ${solutions.join(" \\| ")} |`,
         )
         .join("\n");
 
-    return README_TEMPLATE.replace("$card", card).replace("$table", table_str);
+    return T(template, { card, username: user.username, table: table_str });
 }
 
 async function get_bests({
     leetcode,
     spinner,
-    max_retry,
+    retry,
     cache,
     skip,
 }: {
     leetcode: LeetCode;
     spinner: Ora.Ora | null;
-    max_retry: number;
+    retry: number;
     cache: (Submission & { cached?: boolean })[];
     skip: number[];
 }) {
@@ -265,9 +223,9 @@ async function get_bests({
 
     const prev_last = cache[0]?.id || 0;
     for (let i = 0; i < 1000; i++) {
-        const submissions = await retry(
-            () => leetcode.get_submissions({ limit: 20, offset: i * 20 }),
-            max_retry,
+        const submissions = await rerun(
+            () => leetcode.submissions({ limit: 20, offset: i * 20 }),
+            retry,
         );
 
         if (submissions.every((submission) => set.has(submission.id))) {
