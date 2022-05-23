@@ -29,15 +29,18 @@ export async function build(
     logger.log("Symlinked node_modules");
 
     transform(source, tmp, template_path, verbose);
-    logger.log("Site transformed");
+    logger.log("Solutions Transformed");
 
     if (fs.existsSync(output)) {
         fs.rmSync(output, { recursive: true });
     }
 
     await build_site(workspace, output, {
-        plugins: [[require.resolve("@vuepress/plugin-search"), {}]],
         title: "LeetCode Solutions",
+        plugins: [
+            [require.resolve("@vuepress/plugin-search"), {}],
+            [require.resolve("@vuepress/plugin-pwa"), { skipWaiting: true }],
+        ],
         ...safe_parse(config),
     });
     fs.rmSync(workspace, { recursive: true });
@@ -53,8 +56,7 @@ async function build_site(workspace: string, dest: string, config?: unknown): Pr
         `export default ${JSON.stringify(config, null, 4)};`,
     );
 
-    execSync(`${exe} build source --dest site`, { stdio: "inherit", cwd: workspace });
-    fs.moveSync(path.resolve(workspace, "site"), dest, { overwrite: true });
+    execSync(`${exe} build source --dest ${dest}`, { stdio: "inherit", cwd: workspace });
 }
 
 function safe_parse(path?: string) {

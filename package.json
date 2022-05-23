@@ -52,6 +52,7 @@
         "@vuepress/plugin-medium-zoom": "2.0.0-beta.38",
         "@vuepress/plugin-nprogress": "2.0.0-beta.38",
         "@vuepress/plugin-search": "2.0.0-beta.38",
+        "@vuepress/plugin-pwa": "2.0.0-beta.38",
         "chalk": "4.1.2",
         "commander": "9.0.0",
         "dotenv": "16.0.0",
