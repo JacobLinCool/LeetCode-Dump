@@ -35,8 +35,11 @@ export async function build(
         fs.rmSync(output, { recursive: true });
     }
 
+    const { owner, repo } = github_repo();
+
     await build_site(workspace, output, {
-        title: "LeetCode Solutions",
+        title: `${owner ? owner + "'s" : "LeetCode"} Solutions`,
+        base: repo && !process.env.CNAME ? `/${repo}/` : "/",
         plugins: [
             [require.resolve("@vuepress/plugin-search"), {}],
             [require.resolve("@vuepress/plugin-pwa"), { skipWaiting: true }],
@@ -45,6 +48,11 @@ export async function build(
     });
     fs.rmSync(workspace, { recursive: true });
     logger.log("Build Complete");
+
+    if (process.env.CNAME) {
+        fs.writeFileSync(path.resolve(output, "CNAME"), process.env.CNAME);
+        logger.log(`CNAME file created (${process.env.CNAME})`);
+    }
 }
 
 async function build_site(workspace: string, dest: string, config?: unknown): Promise<void> {
@@ -56,7 +64,8 @@ async function build_site(workspace: string, dest: string, config?: unknown): Pr
         `export default ${JSON.stringify(config, null, 4)};`,
     );
 
-    execSync(`${exe} build source --dest ${dest}`, { stdio: "inherit", cwd: workspace });
+    execSync(`${exe} build source --dest site-dest-temp`, { stdio: "inherit", cwd: workspace });
+    fs.moveSync(path.resolve(workspace, "site-dest-temp"), dest, { overwrite: true });
 }
 
 function safe_parse(path?: string) {
@@ -69,4 +78,9 @@ function safe_parse(path?: string) {
     } catch {
         return undefined;
     }
+}
+
+function github_repo(): { owner?: string; repo?: string } {
+    const [owner, repo] = process.env.GITHUB_REPOSITORY?.split("/") ?? [];
+    return { owner, repo };
 }
