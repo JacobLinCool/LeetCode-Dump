@@ -32,7 +32,7 @@ export async function transform(
             path.resolve(output, "README.md"),
             fix(fs.readFileSync(path.resolve(source, "README.md"), "utf8")),
         );
-        logger.log("Root level README.md written");
+        logger.log("Root level README.md created");
 
         const problems = fs
             .readdirSync(source)
@@ -49,7 +49,7 @@ export async function transform(
             fs.mkdirSync(path.resolve(output, slug), { recursive: true });
             const doc = gen_doc(path.resolve(source, problem), template);
             fs.writeFileSync(path.resolve(output, slug, "index.md"), doc);
-            logger.log(`${problem} written`);
+            logger.log(`${problem} transformed`);
         }
 
         logger.log("Transform Complete");
