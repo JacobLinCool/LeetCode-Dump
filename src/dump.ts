@@ -177,7 +177,7 @@ async function create_toc(
     user: Whoami,
     template: string,
 ) {
-    const card = `[![LeetCode Stats Card](https://leetcode.card.workers.dev/?username=${user.username}&theme=auto)](https://leetcode.com/${user.username}/)`;
+    const card = `[![LeetCode Stats Card](https://leetcard.jacoblin.cool/${user.username})](https://leetcode.com/${user.username}/)`;
     const regex = /\d+\./;
     const table_str = table
         .sort(
