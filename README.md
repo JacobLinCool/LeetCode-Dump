@@ -137,18 +137,18 @@ docker run --rm jacoblincool/leetcode-dump --help
 
 ```sh
 # Dump Solutions and Notes
-docker run --rm -v $(pwd)/leetcode:/usr/workspace/leetcode jacoblincool/leetcode-dump -s "YOUR_LEETCODE_SESSION"
+docker run --rm -v $(pwd)/leetcode:/leetcode jacoblincool/leetcode-dump -s "YOUR_LEETCODE_SESSION"
 # --rm: remove container after exit
-# -v: mount volume, {current directory}/leetcode (host) <-> /usr/workspace/leetcode (container)
+# -v: mount volume, {current directory}/leetcode (host) <-> /leetcode (container)
 ```
 
 ```sh
 # Build Static Site
-docker run --rm -v $(pwd)/leetcode:/usr/workspace/leetcode -v $(pwd)/site:/usr/workspace/site jacoblincool/leetcode-dump build
+docker run --rm -v $(pwd)/leetcode:/leetcode -v $(pwd)/site:/site jacoblincool/leetcode-dump build
 # --rm: remove container after exit
 # -v: mount volumes:
-#           {current directory}/leetcode (host) <-> /usr/workspace/leetcode (container)
-#           {current directory}/site (host) <-> /usr/workspace/site (container)
+#           {current directory}/leetcode (host) <-> /leetcode (container)
+#           {current directory}/site (host) <-> /site (container)
 ```
 
 You can simply change the mounted host volume to any location you want.
