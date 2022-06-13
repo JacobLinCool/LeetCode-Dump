@@ -1,7 +1,6 @@
 FROM node:lts-slim
 
-WORKDIR /usr/workspace
-COPY . ./
-RUN npm i -g pnpm && pnpm i -P
+COPY . ./leetcode-dump
+RUN cd leetcode-dump && npx -y pnpm i -P
 
-ENTRYPOINT [ "node", "./lib/leetcode-dump.js" ]
+ENTRYPOINT [ "node", "/leetcode-dump/lib/leetcode-dump.js" ]
