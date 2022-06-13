@@ -24,7 +24,7 @@
 
 ## Install
 
-You need Node.js 16+.
+You need Node.js 16+. Or [using Docker](#docker-usage).
 
 ```sh
 npm i -g leetcode-dump
@@ -61,6 +61,8 @@ Example:
 ```sh
 leetcode-dump -s "eyJ0eXAiOiJKV1...AJFGlVhZ7f5QL8"
 ```
+
+[How to get my session](#how-to-get-my-session)
 
 ### Build Static Site
 
@@ -177,3 +179,9 @@ docker run --rm -v $(pwd):/lc jacoblincool/leetcode-dump build -s /lc/solutions 
 ![screenshot-solution](./screenshots/screenshot-solution.png)
 
 ![screenshot-code](./screenshots/screenshot-code.png)
+
+## How to Get My Session
+
+Open dev tool, go to `application` tab, then find the cookie `LEETCODE_SESSION`, it's a JWT.
+
+![screenshot-session](./screenshots/screenshot-session.png)
