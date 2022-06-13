@@ -1,8 +1,9 @@
 import { execSync } from "node:child_process";
 import path from "node:path";
 import fs from "fs-extra";
+import isDocker from "is-docker";
 import { transform } from "./transform";
-import { Logger } from "./utils";
+import { Logger, sleep } from "./utils";
 
 export async function build(
     source: string,
@@ -65,7 +66,11 @@ async function build_site(workspace: string, dest: string, config?: unknown): Pr
     );
 
     execSync(`${exe} build source --dest site-dest-temp`, { stdio: "inherit", cwd: workspace });
-    fs.moveSync(path.resolve(workspace, "site-dest-temp"), dest, { overwrite: true });
+    if (!isDocker()) {
+        fs.moveSync(path.resolve(workspace, "site-dest-temp"), dest, { overwrite: true });
+    } else {
+        fs.copySync(path.resolve(workspace, "site-dest-temp"), dest, { recursive: true });
+    }
 }
 
 function safe_parse(path?: string) {
